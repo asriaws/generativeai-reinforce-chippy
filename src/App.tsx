@@ -48,6 +48,7 @@ function App() {
 		sessionToken: ""
 	});
 	// const [currentSession, setCurrentSession] = useState<CognitoUserSession>();
+	//testcomment
 	
 	const [transcriptionClient, setTranscriptionClient] = useState<TranscribeStreamingClient | null>(null);
 	const [transcribeStatus, setTranscribeStatus] = useState<boolean>(false);
