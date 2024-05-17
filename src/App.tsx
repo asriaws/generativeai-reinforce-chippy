@@ -111,6 +111,14 @@ function App() {
 		return transcribeStatus;
 	};
 
+	// Create function to convert text to speech to text
+	const textToSpeech = async () => {
+		const text = "This is a test of text to speech";
+		const synth = window.speechSynthesis;
+		const utterance = new SpeechSynthesisUtterance(text);
+		synth.speak(utterance);
+	};
+
 	return (
 		<Router>
 			<Authenticator loginMechanisms={['email']} formFields={formFields}>
@@ -129,7 +137,9 @@ function App() {
 															<Button variant='primary' onClick={handleTranscribe}>
 																{ transcribeStatus ? "Stop Transcription" : "Start Transcription" } 
 															</Button>
-
+															<Button variant='primary' onClick={textToSpeech}>
+																Text to Speech																
+															</Button>
 															<Button variant='primary' onClick={signOut}>
 																Sign out
 															</Button>
