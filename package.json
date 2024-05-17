@@ -20,7 +20,8 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-native-paho-mqtt": "^0.1.1",
-    "react-router-dom": "^6.16.0"
+    "react-router-dom": "^6.16.0",
+    "react-ts-typewriter": "^0.1.8-b"
   },
   "devDependencies": {
     "@types/audioworklet": "^0.0.50",

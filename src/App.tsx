@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react'
-
 import {
 	BrowserRouter as Router,
 	Routes,
 	Route
 } from "react-router-dom";
-
 import {
 	ContentLayout,
 	Header,
@@ -13,28 +11,27 @@ import {
 	Button,
 	Container,
 } from '@cloudscape-design/components';
-
 import { Auth } from 'aws-amplify';
 import { ICredentials } from "@aws-amplify/core";
-
 import { Authenticator } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
-
 import { TranscribeStreamingClient } from "@aws-sdk/client-transcribe-streaming";
-
-async function signOut() {
-  try {
-      await Auth.signOut();
-  } catch (error) {
-      console.log('error signing out: ', error);
-  }
-}
-
 import awsExports from './aws-exports';
 import './App.css'
 import { Transcript } from './types';
 import LiveTranscriptions from './components/LiveTranscriptions';
+import Typewriter from 'react-ts-typewriter';
 
+
+async function signOut() {
+	try {
+		await Auth.signOut();
+	} catch (error) {
+		console.log('error signing out: ', error);
+	}
+}
+
+const TypewriterText = 'Once upon a time, there was a little girl. One day, Lily parents brought home a new robot puppy named Chippy. Chippy could do all sorts of cool tricks and games. However, Chippy would sometimes bark loudly and scare Lily. Lilys mom explained to her that Chippy was made using something called AI, which means it was really smart, but it didnt always know right from wrong. Mom said that the people who made Chippy needed to make sure they were being "Responsible AI." This means they had to teach Chippy to be kind, fair, and safe, just like we teach real puppy.'
 
 Auth.configure(awsExports)
 
@@ -117,11 +114,35 @@ function App() {
 		synth.speak(utterance);
 	};
 
+	
 	return (
-		<Router>
+		<>
+			<div style={{width:'100%'}}>
+				<div style={{width:'50%', float:'left', paddingTop: '10%'}}>
+								<img src="./images/story-teller.png" style={{width:'100%', height:'100%'}} alt="Image" />
+				</div>
+				<div style={{width:'50%', float:'left', paddingTop: '10%'}} id='whitespace'>
+					<Typewriter text='What is KMS?'/>
+					<br/>
+					<br/>
+					<Typewriter text={TypewriterText} loop='true'/>
+				</div>
+			</div>
+			<div>
+			<Button variant='primary' onClick={handleTranscribe}>
+																{ transcribeStatus ? "Stop Transcription" : "Start Transcription" } 
+			</Button>
+			<Button variant='primary' onClick={textToSpeech}>
+				Text to Speech																
+			</Button>
+			<Button variant='primary' onClick={signOut}>
+				Sign out
+			</Button>
+			<Router>
 			<Authenticator loginMechanisms={['email']} formFields={formFields}>
 				{() => (
 					<>
+						
 						<Routes>
 							<Route path="/" element={<>
 									<ContentLayout
@@ -132,19 +153,11 @@ function App() {
 													description="Demo of live transcriptions"
 													actions={
 														<SpaceBetween direction="horizontal" size="m">															
-															<Button variant='primary' onClick={handleTranscribe}>
-																{ transcribeStatus ? "Stop Transcription" : "Start Transcription" } 
-															</Button>
-															<Button variant='primary' onClick={textToSpeech}>
-																Text to Speech																
-															</Button>
-															<Button variant='primary' onClick={signOut}>
-																Sign out
-															</Button>
+															
 														</SpaceBetween>
 													}
 												>
-													Amazon Transcribe Live Transcriptions
+												
 												</Header>
 											</SpaceBetween>
 										}
@@ -200,6 +213,9 @@ function App() {
 				)}
 			</Authenticator>
 		</Router>
+		</div>
+		</>
+		
 	);
 }
 
