@@ -31,7 +31,7 @@ async function signOut() {
 	}
 }
 
-const TypewriterText = 'Once upon a time, there was a little girl. One day, Lily parents brought home a new robot puppy named Chippy. Chippy could do all sorts of cool tricks and games. However, Chippy would sometimes bark loudly and scare Lily. Lilys mom explained to her that Chippy was made using something called AI, which means it was really smart, but it didnt always know right from wrong. Mom said that the people who made Chippy needed to make sure they were being "Responsible AI." This means they had to teach Chippy to be kind, fair, and safe, just like we teach real puppy.'
+const TyperwriterText = 'Once upon a time, there was a little girl. One day, Lily parents brought home a new robot puppy named Chippy. Chippy could do all sorts of cool tricks and games. However, Chippy would sometimes bark loudly and scare Lily. Lilys mom explained to her that Chippy was made using something called AI, which means it was really smart, but it didnt always know right from wrong. Mom said that the people who made Chippy needed to make sure they were being Responsible AI. This means they had to teach Chippy to be kind, fair, and safe, just like we teach real puppy.';
 
 Auth.configure(awsExports)
 
@@ -125,12 +125,12 @@ function App() {
 					<Typewriter text='What is KMS?'/>
 					<br/>
 					<br/>
-					<Typewriter text={TypewriterText} loop='true'/>
+					<Typewriter text={TyperwriterText} loop= {true}/>
 				</div>
 			</div>
 			<div>
 			<Button variant='primary' onClick={handleTranscribe}>
-																{ transcribeStatus ? "Stop Transcription" : "Start Transcription" } 
+				{ transcribeStatus ? "Stop Transcription" : "Start Transcription" } 
 			</Button>
 			<Button variant='primary' onClick={textToSpeech}>
 				Text to Speech																
