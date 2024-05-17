@@ -13,8 +13,6 @@ import {
 	Button,
 	Container,
 } from '@cloudscape-design/components';
-import '@cloudscape-design/global-styles/index.css';
-
 
 import { Auth } from 'aws-amplify';
 import { ICredentials } from "@aws-amplify/core";
