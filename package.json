@@ -14,6 +14,8 @@
     "@aws-sdk/client-transcribe-streaming": "^3.427.0",
     "@cloudscape-design/components": "^3.0.400",
     "@cloudscape-design/global-styles": "^1.0.12",
+    "@types/react-router-dom": "^5.3.3",
+    "@types/react-router-hash-link": "^2.4.9",
     "amazon-cognito-identity-js": "^6.3.6",
     "aws-amplify": "^5.3.11",
     "p-event": "^4.2.0",
@@ -21,6 +23,7 @@
     "react-dom": "^18.2.0",
     "react-native-paho-mqtt": "^0.1.1",
     "react-router-dom": "^6.16.0",
+    "react-router-hash-link": "^2.4.3",
     "react-ts-typewriter": "^0.1.8-b"
   },
   "devDependencies": {

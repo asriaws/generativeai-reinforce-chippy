@@ -116,53 +116,29 @@ function App() {
 
 	
 	return (
-		<>				
-		<div style={{width:'100%', height: '800px'}}>
-			<div style={{width:'50%', float:'left', paddingTop: '10%'}}>
-				<img src="./images/story-teller.png" style={{width:'100%', height:'100%'}} alt="Image" />
+		<>
+			<div style={{width:'100%', height: '800px'}}>
+				<div style={{width:'50%', float:'left', paddingTop: '10%'}}>
+					<img src="./images/story-teller.png" style={{width:'100%', height:'100%'}} alt="Image" />
+				</div>
+				<div style={{width:'50%', float:'left', paddingTop: '10%', height: '80%'}} id='whitespace'>
+					<Typewriter text='What is KMS?'/>
+					<br/>
+					<br/>
+					<Typewriter text={TyperwriterText} loop= {true}/>
+				</div>
+				<div style={{width:'50%', float:'left', height: '20%'}} id='whitespace'>
+					
+					<Button variant='startgame' style={{width: '200px', height:'200px'}}>
+						Chippy the Gamer
+					</Button>
+					<Button variant='storyteller'>
+						Chippy the Storyteller
+					</Button>
+				</div>
 			</div>
-			<div style={{width:'50%', float:'left', paddingTop: '10%', height: '80%'}} id='whitespace'>
-				<Typewriter text='What is KMS?'/>
-				<br/>
-				<br/>
-				<Typewriter text={TyperwriterText} loop= {true}/>
-			</div>
-			<div style={{width:'50%', float:'left', height: '20%'}} id='whitespace'>
-				<Button variant='startgame' style={{width: '200px', height:'200px'}}>
-					Chippy the Gamer
-				</Button>
-				<Button variant='storyteller'>
-					Chippy the Storyteller
-				</Button>
-			</div>
-		</div>
-		<div>
-		</div>
-		<div style={{width:'100%', height: '800px'}}>
-			<div style={{width:'50%', float:'left', paddingTop: '10%', marginTop: '20%'}} >
-				<p>What would you like to ask Chippy about Responsible AI? Chippy is happy to enable us how to use AI in a kind and helpful way.</p>
-				<Button variant='storytopic' >
-					Ask Chippy
-				</Button>
-			</div>
-			<div style={{width:'50%', float:'left', paddingTop: '10%'}} >
-				<img src="./images/story.gif" style={{width:'100%', height:'100%'}} alt="Image" />
-			</div>
-		</div>
-
-		<div style={{width:'100%', height: '800px'}}>
-			<div style={{width:'50%', float:'left', paddingTop: '10%'}} >
-				<img src="./images/playgame.gif" style={{width:'100%', height:'100%'}} alt="Image" />
-			</div>
-			<div style={{width:'50%', float:'left', paddingTop: '10%', marginTop: '20%'}} >
-				<p>Ahha, now that you learn, let's play a fun game with Chippy. Are you ready?</p>
-				<Button variant='playgame' >
-					Play with Chippy
-				</Button>
-			</div>	
-		</div>
-
-		<div>
+			<div>
+			
 			<Button variant='primary' onClick={handleTranscribe}>
 				{ transcribeStatus ? "Stop Transcription" : "Start Transcription" } 
 			</Button>
@@ -175,52 +151,79 @@ function App() {
 			<Router>
 			<Authenticator loginMechanisms={['email']} formFields={formFields}>
 				{() => (
-				<>
-					<Routes>
-						<Route path="/" element={<>
-								<ContentLayout>
-									<Container>
-										<SpaceBetween size='xs'>
-											<div style={{height: '663px'}} className={"transcriptionContainer"}>
-												{lines.map((line, index) => {
-														return (
-															<div key={index}>
-																<strong>Channel {line.channel}</strong>: {line.text}
-																<br/>
-															</div>
-														)
-													})
-												}
-												{currentLine.length > 0 && 
-													currentLine.map((line, index) => {
-														return (
-															<div key={index}>
-																<strong>Channel {line.channel}</strong>: {line.text}
-																<br/>
-															</div>
-														)
-													})
-												}
-											</div>
-										</SpaceBetween>
-									</Container>
-								</ContentLayout>
-								<LiveTranscriptions
-									currentCredentials={currentCredentials}
-									mediaRecorder={mediaRecorder}
-									setMediaRecorder={setMediaRecorder}
-									setTranscriptionClient={setTranscriptionClient}
-									transcriptionClient={transcriptionClient}
-									transcribeStatus={transcribeStatus}
-									setTranscript={setTranscript}
-								/>
-							</>
-						}/>
-					</Routes>
-				</>
+					<>
+						
+						<Routes>
+							<Route path="/" element={<>
+									<ContentLayout
+										header={
+											<SpaceBetween size="m">
+												<Header
+													variant="h1"
+													description="Demo of live transcriptions"
+													actions={
+														<SpaceBetween direction="horizontal" size="m">															
+															
+														</SpaceBetween>
+													}
+												>
+												
+												</Header>
+											</SpaceBetween>
+										}
+									>
+										<Container
+													header={
+														<Header
+															variant="h2"
+														>
+															Transcriptions
+														</Header>
+													}
+											>
+												<SpaceBetween size='xs'>
+													<div style={{height: '663px'}} className={"transcriptionContainer"}>
+														{lines.map((line, index) => {
+																return (
+																	<div key={index}>
+																		<strong>Channel {line.channel}</strong>: {line.text}
+																		<br/>
+																	</div>
+																)
+															})
+														}
+														{currentLine.length > 0 && 
+															currentLine.map((line, index) => {
+																return (
+																	<div key={index}>
+																		<strong>Channel {line.channel}</strong>: {line.text}
+																		<br/>
+																	</div>
+																)
+															})
+														}
+													</div>
+												</SpaceBetween>
+										</Container>
+
+									</ContentLayout>
+									<LiveTranscriptions
+										currentCredentials={currentCredentials}
+										mediaRecorder={mediaRecorder}
+										setMediaRecorder={setMediaRecorder}
+										setTranscriptionClient={setTranscriptionClient}
+										transcriptionClient={transcriptionClient}
+										transcribeStatus={transcribeStatus}
+										setTranscript={setTranscript}
+									/>
+								</>
+							}/>
+						</Routes>
+					</>
 				)}
 			</Authenticator>
 		</Router>
+		
 		</div>
 		</>
 		
