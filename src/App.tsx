@@ -2,12 +2,10 @@ import { useEffect, useState } from 'react'
 import {
 	BrowserRouter as Router,
 	Routes,
-	Route,
-	BrowserRouter
+	Route
 } from "react-router-dom";
 import {
 	ContentLayout,
-	Header,
 	SpaceBetween,
 	Button,
 	Container,
@@ -128,10 +126,10 @@ function App() {
 				<Typewriter text={TyperwriterText} loop= {true}/>
 			</div>
 			<div style={{width:'50%', float:'left', height: '20%'}} id='whitespace'>
-				<Button variant='startgame' style={{width: '200px', height:'200px'}}>
+				<Button variant='primary' onClick={textToSpeech}>
 					Chippy the Gamer
 				</Button>
-				<Button variant='storyteller'>
+				<Button variant='primary'>
 					Chippy the Storyteller
 				</Button>
 			</div>
@@ -141,7 +139,7 @@ function App() {
 		<div style={{width:'100%', height: '800px'}}>
 			<div style={{width:'50%', float:'left', paddingTop: '10%', marginTop: '20%'}} >
 				<p>What would you like to ask Chippy about Responsible AI? Chippy is happy to enable us how to use AI in a kind and helpful way.</p>
-				<Button variant='storytopic' >
+				<Button variant='primary' onClick={textToSpeech} >
 					Ask Chippy
 				</Button>
 			</div>
@@ -154,9 +152,9 @@ function App() {
 			<div style={{width:'50%', float:'left', paddingTop: '10%'}} >
 				<img src="./images/playgame.gif" style={{width:'100%', height:'100%'}} alt="Image" />
 			</div>
-			<div style={{width:'50%', float:'left', paddingTop: '10%', marginTop: '20%'}} >
+			<div style={{width:'50%', float:'left', paddingTop: '10%', marginTop: '15%'}} >
 				<p>Ahha, now that you learn, let's play a fun game with Chippy. Are you ready?</p>
-				<Button variant='playgame' >
+				<Button variant='primary' onClick={textToSpeech}>
 					Play with Chippy
 				</Button>
 			</div>	

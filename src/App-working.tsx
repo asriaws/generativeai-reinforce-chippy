@@ -2,8 +2,7 @@ import { useEffect, useState } from 'react'
 import {
 	BrowserRouter as Router,
 	Routes,
-	Route,
-	BrowserRouter
+	Route
 } from "react-router-dom";
 import {
 	ContentLayout,
@@ -127,15 +126,7 @@ function App() {
 					<br/>
 					<Typewriter text={TyperwriterText} loop= {true}/>
 				</div>
-				<div style={{width:'50%', float:'left', height: '20%'}} id='whitespace'>
-					
-					<Button variant='startgame' style={{width: '200px', height:'200px'}}>
-						Chippy the Gamer
-					</Button>
-					<Button variant='storyteller'>
-						Chippy the Storyteller
-					</Button>
-				</div>
+				
 			</div>
 			<div>
 			
