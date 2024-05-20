@@ -8,6 +8,7 @@ import {
 } from '@aws-sdk/client-transcribe-streaming';
 import { ICredentials } from "@aws-amplify/core";
 import pEvent from 'p-event';
+import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
 
 import {
   RecordingProperties,
@@ -126,6 +127,32 @@ const startStreaming = async (
       }
     }
   }
+  console.log("After Lambda Invoke01")
+  // Call lambda Function for getting the response 
+  const lambdaClient = new LambdaClient({
+    region: 'us-east-1',
+    credentials: currentCredentials,
+  });
+
+  // use lambdaClient to InvokeCommand with input JSON
+  const input = { "question": "What is AWS Key Management Service?" };
+  const inputJSON = JSON.stringify(input);
+
+  const response = await lambdaClient.send(
+    new InvokeCommand({
+      FunctionName: "askChippy",
+      InvocationType: "RequestResponse",
+      Payload: inputJSON,
+    })
+  );
+
+  const payload = JSON.parse(new TextDecoder().decode(response.Payload));
+
+  // Speech to text Conversion
+  const text = payload.body;
+  const synth = window.speechSynthesis;
+  const utterance = new SpeechSynthesisUtterance(text);
+  synth.speak(utterance);
 };
 
 

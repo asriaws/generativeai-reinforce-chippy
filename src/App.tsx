@@ -126,12 +126,7 @@ function App() {
 				<Typewriter text={TyperwriterText} loop= {true}/>
 			</div>
 			<div style={{width:'50%', float:'left', height: '20%'}} id='whitespace'>
-				<Button variant='primary' onClick={textToSpeech}>
-					Chippy the Gamer
-				</Button>
-				<Button variant='primary'>
-					Chippy the Storyteller
-				</Button>
+				
 			</div>
 		</div>
 		<div>
@@ -139,7 +134,7 @@ function App() {
 		<div style={{width:'100%', height: '800px'}}>
 			<div style={{width:'50%', float:'left', paddingTop: '10%', marginTop: '20%'}} >
 				<p>What would you like to ask Chippy about Responsible AI? Chippy is happy to enable us how to use AI in a kind and helpful way.</p>
-				<Button variant='primary' onClick={textToSpeech} >
+				<Button variant='primary' onClick={handleTranscribe} >
 					Ask Chippy
 				</Button>
 			</div>
