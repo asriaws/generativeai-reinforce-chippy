@@ -1,5 +1,5 @@
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import {
   TranscribeStreamingClient,
@@ -25,6 +25,7 @@ const audiosource = import.meta.env.VITE_TRANSCRIBE_AUDIO_SOURCE;
 const startStreaming = async (
   handleTranscribeOutput: (data: string, partial: boolean, transcriptionClient: TranscribeStreamingClient, mediaRecorder: AudioWorkletNode) => void,
   currentCredentials: ICredentials,
+  setInputText: (text: string) => void //new
 ) => {
 
   const audioContext = new window.AudioContext();
@@ -105,9 +106,16 @@ const startStreaming = async (
   const data = await transcribeClient.send(command);
   console.log('Transcribe sesssion established ', data.SessionId);
 
+  let inputText = ''; // Initialize an empty string to store the input text NEW
+  const startTime = Date.now(); // Get the start time of the transcription NEW
 
   if (data.TranscriptResultStream) {
-    for await (const event of data.TranscriptResultStream) {
+    for await (const event of data.TranscriptResultStream) {      //new
+      const currentTime = Date.now();               //new
+      const elapsedTime = currentTime - startTime; //new
+      if (elapsedTime > 5000) {                   // Stop processing after 5 seconds NEW
+        break;                                    //new
+      }                                           //new
       if (event?.TranscriptEvent?.Transcript) {
         for (const result of event?.TranscriptEvent?.Transcript.Results || []) {
           if (result?.Alternatives && result?.Alternatives[0].Items) {
@@ -115,6 +123,7 @@ const startStreaming = async (
             for (let i = 0; i < result?.Alternatives[0].Items?.length; i++) {
               completeSentence += ` ${result?.Alternatives[0].Items[i].Content}`;
             }
+            inputText += completeSentence; // Append each complete sentence to the input text NEW
             // console.log(`Transcription: ${completeSentence}`);
             handleTranscribeOutput(
               completeSentence,
@@ -125,9 +134,10 @@ const startStreaming = async (
           }
         }
       }
-    }
+    }  
   }
-  console.log("After Lambda Invoke01")
+  setInputText(inputText.trim()); // Set the input text after the transcription is complete or 5 seconds have elapsed
+
   // Call lambda Function for getting the response 
   const lambdaClient = new LambdaClient({
     region: 'us-east-1',
@@ -135,7 +145,7 @@ const startStreaming = async (
   });
 
   // use lambdaClient to InvokeCommand with input JSON
-  const input = { "question": "What is AWS Key Management Service?" };
+  const input = { "question": inputText }; //new
   const inputJSON = JSON.stringify(input);
 
   const response = await lambdaClient.send(
@@ -148,7 +158,7 @@ const startStreaming = async (
 
   const payload = JSON.parse(new TextDecoder().decode(response.Payload));
 
-  // Speech to text Conversion
+  // Text to Speech Conversion
   const text = payload.body;
   const synth = window.speechSynthesis;
   const utterance = new SpeechSynthesisUtterance(text);
@@ -197,6 +207,8 @@ const LiveTranscriptions = (props: LiveTranscriptionProps) => {
     setTranscript,
   } = props;
 
+  const [inputText, setInputText] = useState(''); // Add a state variable for the input text NEW
+
   const onTranscriptionDataReceived = (
     data: string,
     partial: boolean,
@@ -221,6 +233,7 @@ const LiveTranscriptions = (props: LiveTranscriptionProps) => {
       await startStreaming(
         onTranscriptionDataReceived,
         currentCredentials,
+        setInputText
       );
     } catch (error) {
       alert(`An error occurred while recording: ${error}`);
@@ -240,6 +253,7 @@ const LiveTranscriptions = (props: LiveTranscriptionProps) => {
 
     if (transcribeStatus) {
       console.log('startRecording');
+      console.log('Input Text:', inputText); // Use inputText here NEW
       await startRecording();
     } else {
       console.log('stopRecording');
