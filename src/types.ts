@@ -15,6 +15,8 @@ export interface LiveTranscriptionProps {
   transcriptionClient: TranscribeStreamingClient | null,
   transcribeStatus: boolean,
   setTranscript: (t: Transcript) => void,
+  startRoundProp: boolean,
+  updateMessage: (newMessage: string) => void,
 }
 
 

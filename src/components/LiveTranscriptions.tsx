@@ -9,7 +9,8 @@ import {
 import { ICredentials } from "@aws-amplify/core";
 import pEvent from 'p-event';
 import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
-
+//import { SFNClient, SendTaskSuccessCommand, GetActivityTaskCommand } from '@aws-sdk/client-sfn';
+import { KinesisClient, PutRecordCommand } from '@aws-sdk/client-kinesis';
 import {
   RecordingProperties,
   MessageDataType,
@@ -25,7 +26,9 @@ const audiosource = import.meta.env.VITE_TRANSCRIBE_AUDIO_SOURCE;
 const startStreaming = async (
   handleTranscribeOutput: (data: string, partial: boolean, transcriptionClient: TranscribeStreamingClient, mediaRecorder: AudioWorkletNode) => void,
   currentCredentials: ICredentials,
-  setInputText: (text: string) => void //new
+  setInputText: (text: string) => void, //new
+  startRoundProp: boolean,
+  updateMessage: (newMessage: string) => void
 ) => {
 
   const audioContext = new window.AudioContext();
@@ -137,8 +140,9 @@ const startStreaming = async (
     }  
   }
   setInputText(inputText.trim()); // Set the input text after the transcription is complete or 5 seconds have elapsed
+  
 
-  // Call lambda Function for getting the response 
+  console.log("After Lambda Invoke01")
   const lambdaClient = new LambdaClient({
     region: 'us-east-1',
     credentials: currentCredentials,
@@ -148,6 +152,67 @@ const startStreaming = async (
   const input = { "question": inputText }; //new
   const inputJSON = JSON.stringify(input);
 
+  if (startRoundProp == true) {
+    //this is the code that will send the input (inputJSON) to the streamResponse task/evaluateresponse lambda
+    const sendDataToKinesisStream = async (inputText: string) => {
+      const input = { question: inputText };
+      const inputJSON = JSON.stringify(input);
+    
+      const kinesisClient = new KinesisClient({
+        region: 'us-east-1', // Replace with your AWS region
+        credentials: currentCredentials,
+      });
+      
+      const encoder = new TextEncoder();
+      const data = encoder.encode(inputJSON);
+
+      const putRecordCommand = new PutRecordCommand({
+        StreamName: 'evaluateResponse',
+        Data: data,
+        PartitionKey: 'shardId-000000000000',
+      });
+ 
+    try {
+      const response = await kinesisClient.send(putRecordCommand);
+      console.log('Record sent to Kinesis:', response);
+    } catch (error) {
+      console.error('Error sending record to Kinesis:', error);
+    }
+    };
+    await sendDataToKinesisStream(inputText);
+    await updateMessage("Sniffing out the right answer is no easy task, let’s paws and see if your answer will earn you a treat!");
+    //code to invoke evaluate response api
+    const apiUrl = 'https://6gh412g0c7.execute-api.us-east-1.amazonaws.com/test/evaluateResponse';
+    fetch(apiUrl, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(response => {
+        if (response.ok) {
+          console.log('Response headers:', response.headers);
+          return response.json(); // Parse the response as JSON
+        } else {
+          throw new Error('Request failed with status code: ' + response.status);
+        }
+      })
+      .then(data => {
+        // Handle the response data
+        console.log('Response data:', data);
+        updateMessage(data);
+      })
+      .catch(error => {
+        // Handle any errors
+        console.error('Error:', error);
+      });
+     
+    // Perform any additional actions or logic when startRoundProp is true
+    console.log("Start Round prop is true");
+  }
+  else ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  {
+    // Calls AskChippy lambda Function
   const response = await lambdaClient.send(
     new InvokeCommand({
       FunctionName: "askChippy",
@@ -155,7 +220,7 @@ const startStreaming = async (
       Payload: inputJSON,
     })
   );
-
+  //gets payload back from function
   const payload = JSON.parse(new TextDecoder().decode(response.Payload));
 
   // Text to Speech Conversion
@@ -163,6 +228,7 @@ const startStreaming = async (
   const synth = window.speechSynthesis;
   const utterance = new SpeechSynthesisUtterance(text);
   synth.speak(utterance);
+  }
 };
 
 
@@ -233,7 +299,9 @@ const LiveTranscriptions = (props: LiveTranscriptionProps) => {
       await startStreaming(
         onTranscriptionDataReceived,
         currentCredentials,
-        setInputText
+        setInputText,
+        props.startRoundProp,
+        props.updateMessage
       );
     } catch (error) {
       alert(`An error occurred while recording: ${error}`);

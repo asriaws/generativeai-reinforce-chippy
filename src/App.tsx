@@ -19,7 +19,10 @@ import awsExports from './aws-exports';
 import './App.css'
 import { Transcript } from './types';
 import LiveTranscriptions from './components/LiveTranscriptions';
+
 import Typewriter from 'react-ts-typewriter';
+import { SFNClient, StartExecutionCommand } from "@aws-sdk/client-sfn";
+import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
 
 async function signOut() {
 	try {
@@ -50,6 +53,8 @@ function App() {
 	const [lines, setLines] = useState<Transcript[]>([]);
 	const [currentLine, setCurrentLine] = useState<Transcript[]>([]);
 	const [mediaRecorder, setMediaRecorder] = useState<AudioWorkletNode>();
+	const [message, setMessage] = useState("");
+	const [startRoundProp, setStartRoundProp] = useState<boolean>(false);
 
 	useEffect(() => {
 		async function getAuth() {
@@ -105,12 +110,79 @@ function App() {
 	};
 
 	// Create function to convert text to speech to text
-	const textToSpeech = async () => {
-		const text = "This is a test of text to speech";
+	const textToSpeech = (text: string): Promise<void> => {
 		const synth = window.speechSynthesis;
 		const utterance = new SpeechSynthesisUtterance(text);
-		synth.speak(utterance);
+	  
+		return new Promise((resolve, reject) => {
+		  utterance.onend = () => {
+			resolve();
+		  };
+	  
+		  utterance.onerror = (event) => {
+			reject(`An error occurred during speech synthesis: ${event.error}`);
+		  };
+	  
+		  synth.speak(utterance);
+		});
 	};
+
+	//handles messages
+	const updateMessage = async (newMessage: string) => {
+		setMessage(newMessage);
+		await textToSpeech(newMessage); // Optional: Call the textToSpeech function with the new message
+	  };
+
+	//Function to trigger Step Functions and Welcome Message
+	const startStepFunction = async () => {
+		try {
+		  const stepFunctionsClient = new SFNClient({
+			region: "us-east-1",
+			credentials: currentCredentials,
+		  });
+	  
+		  const startExecutionParams = {
+			stateMachineArn: "arn:aws:states:us-east-1:989038966811:stateMachine:MyStateMachine-a2ruan05r",
+			input: JSON.stringify({ /* optional input data */ }),
+		  };
+	  
+		  const startExecutionCommand = new StartExecutionCommand(startExecutionParams);
+		  await stepFunctionsClient.send(startExecutionCommand);
+	  
+		  const message = "Welcome to Chippy's Security Spectacular, how ya doin, get ready to have a fun time.";
+		  updateMessage(message);
+		} catch (error) {
+		  console.error("Error starting Step Function:", error);
+		  setMessage("Error starting Step Function.");
+		}
+	  };
+
+	  //Function to trigger askQuestion Lambda Function
+	  const invokeAskQuestion = async () => {
+		try {
+		  const lambdaClient = new LambdaClient({
+			region: "us-east-1",
+			credentials: currentCredentials,
+		  });
+	  
+		  const invokeParams = {
+			FunctionName: "askQuestion",
+			Payload: JSON.stringify({ /* optional input data */ }),
+		  };
+	  
+		  const invokeCommand = new InvokeCommand(invokeParams);
+		  const response = await lambdaClient.send(invokeCommand);
+		  const payload = JSON.parse(new TextDecoder().decode(response.Payload));
+		  await updateMessage(payload.body);
+		  setStartRoundProp(true); // Set the new prop value to true
+		  handleTranscribe(); // Call handleTranscribe
+
+		  console.log("Lambda function response:", response);
+		  // Handle the response from the Lambda function as needed
+		} catch (error) {
+		  console.error("Error invoking Lambda function:", error);
+		}
+	  };
 
 	
 	return (
@@ -149,17 +221,23 @@ function App() {
 			</div>
 			<div style={{width:'50%', float:'left', paddingTop: '10%', marginTop: '15%'}} >
 				<p>Ahha, now that you learn, let's play a fun game with Chippy. Are you ready?</p>
-				<Button variant='primary' onClick={textToSpeech}>
+				<Button variant='primary' onClick={startStepFunction}>
 					Play with Chippy
 				</Button>
 			</div>	
+		</div>
+		<div>
+        <p>{message}</p> {/* Display the message */}
+  		<Button variant='primary' onClick={invokeAskQuestion}>
+   				 Start Round
+  		</Button>
 		</div>
 
 		<div>
 			<Button variant='primary' onClick={handleTranscribe}>
 				{ transcribeStatus ? "Stop Transcription" : "Start Transcription" } 
 			</Button>
-			<Button variant='primary' onClick={textToSpeech}>
+			<Button variant='primary'>
 				Text to Speech																
 			</Button>
 			<Button variant='primary' onClick={signOut}>
@@ -206,6 +284,8 @@ function App() {
 									transcriptionClient={transcriptionClient}
 									transcribeStatus={transcribeStatus}
 									setTranscript={setTranscript}
+									startRoundProp={startRoundProp}
+									updateMessage={updateMessage}
 								/>
 							</>
 						}/>
