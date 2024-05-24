@@ -36,5 +36,5 @@ def lambda_handler(event, context):
     #split response_body when there is a *
     return {
         'statusCode': 200,
-        'body': json.dumps(output_list)
+        'body': json.dumps(output_list[0]['text'])
     }
