@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Link} from 'react-router-dom';
+import { Routes, Route, Link} from 'react-router-dom';
 //import { useNavigate } from 'react-router-dom';
 import { Authenticator } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
@@ -9,7 +9,6 @@ import ResponsibleAIPage from './responsibleAiPage';
 import ChallengePage from './challenge';
 import { Auth } from 'aws-amplify';
 import Typewriter from 'react-ts-typewriter';
-
 
 Auth.configure(awsExports);
 
@@ -47,11 +46,10 @@ function App() {
   return (
     <Authenticator loginMechanisms={['email']} formFields={formFields}>
       {() => (
-        <Router>
           <Routes>
             <Route path="/" element={<div>
                 <div style={{width:'100%', height: '800px'}} id="top level div">
-				<h1 style={{color:'#ec4b31'}}>Chippy's Security Spectacular</h1>
+					<h1 style={{color:'#ec4b31'}}>Chippy's Security Spectacular</h1>
 					<h3 style={{color:'#37646f'}}>Learn Responsible AI on AWS</h3>
 					<div style={{width:'50%', float:'left', paddingTop: '8%'}} id="top left">
 						<img src="./images/story-teller.png" style={{width:'100%', height:'100%'}} alt="Image" />
@@ -84,7 +82,7 @@ function App() {
             <Route path="/responsible-ai" element={<ResponsibleAIPage />} />
             <Route path="/security-challenge" element={<ChallengePage />} />
           </Routes>
-        </Router>
+     
       )}
     </Authenticator>
   );

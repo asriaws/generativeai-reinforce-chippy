@@ -154,7 +154,7 @@ const ChallengePage = () => {
                     {lines.map((line, index) => {
                       return (
                         <div key={index}>
-                          <strong>Channel {line.channel}</strong>: {line.text}
+                          {line.text}
                           <br />
                         </div>
                       );
@@ -163,7 +163,7 @@ const ChallengePage = () => {
                       currentLine.map((line, index) => {
                         return (
                           <div key={index}>
-                            <strong>Channel {line.channel}</strong>: {line.text}
+                            {line.text}
                             <br />
                           </div>
                         );

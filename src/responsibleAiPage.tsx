@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Routes, Route, Link} from 'react-router-dom';
 import { Button } from '@cloudscape-design/components';
 import { Auth } from 'aws-amplify';
 import { ICredentials } from "@aws-amplify/core";
@@ -9,6 +10,7 @@ import awsExports from './aws-exports';
 import './App.css';
 import { Transcript } from './types';
 import LiveTranscriptions from './components/LiveTranscriptions';
+import ChallengePage from './challenge';
 
 //import Typewriter from 'react-ts-typewriter';
 //import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
@@ -116,59 +118,66 @@ const ResponsibleAIPage = () => {
 
   return (
     <Authenticator loginMechanisms={['email']} formFields={formFields}>
-      <h1 style={{color:'#ec4b31'}}>Chippy's Security Spectacular</h1>
-			<h3 style={{color:'#37646f'}}>Learn Responsible AI on AWS</h3>
-      <div style={{width:'100%', height: '800px'}}>
-        <div style={{width:'50%', float:'left', paddingTop: '8%'}} id="top left">
-          <img src="./images/story.gif" style={{width:'100%', height:'100%'}} alt="Image" />
-        </div>
-        <div style={{width:'50%', float:'right', paddingTop: '12%', paddingLeft: '10%', height: '85%', fontFamily: 'Geneva', fontWeight: 800}} id='top right'>
-          <p>What would you like to ask Chippy about Responsible AI or AWS security in general?</p>
-          <p>{message}</p> 
-          <Button variant='primary' onClick={handleTranscribe}>Ask Chippy</Button>
-              <>
-                <ContentLayout>
-                  <Container>
-                    <SpaceBetween size='xs'>
-                    <div style={{height: '200px'}} className={"transcriptionContainer"}>
-                      {lines.map((line, index) => {
-                      return (
-                        <div key={index}>{line.text}<br/></div>
-                      )
-                      })}
-                      {currentLine.length > 0 && 
-                      currentLine.map((line, index) => {
-                        return (
-                        <div key={index}>
-                          <strong>Channel {line.channel}</strong>: {line.text}
-                          <br/>
-                        </div>
-                        )
-                      })
-                      }
-                    </div>
-                    </SpaceBetween>
-                  </Container>
-                </ContentLayout>
-                <LiveTranscriptions
-                  currentCredentials={currentCredentials}
-                  mediaRecorder={mediaRecorder}
-                  setMediaRecorder={setMediaRecorder}
-                  setTranscriptionClient={setTranscriptionClient}
-                  transcriptionClient={transcriptionClient}
-                  transcribeStatus={transcribeStatus}
-                  setTranscript={setTranscript}
-                  startRoundProp={startRoundProp}
-                  updateMessage={updateMessage}
-                />
-              </>
-          </div>
-          <div style={{width:'50%', float:'left', height: '15%'}} id='whitespace1'>
-          <div style={{width:'50%', float:'right', paddingTop: '10%', marginTop: '20%'}} >
-            
-          </div>
-        </div>
-      </div>
+      {() => (
+          <Routes>
+            <Route path="/" element={<div>
+              <h1 style={{color:'#ec4b31'}}>Chippy's Security Spectacular</h1>
+              <h3 style={{color:'#37646f'}}>Learn Responsible AI on AWS</h3>
+              <div style={{width:'100%', height: '800px'}}>
+                <div style={{width:'50%', float:'left', paddingTop: '8%'}} id="top left">
+                  <img src="./images/story.gif" style={{width:'100%', height:'100%'}} alt="Image" />
+                </div>
+                <div style={{width:'50%', float:'right', paddingTop: '12%', paddingLeft: '10%', height: '85%', fontFamily: 'Geneva', fontWeight: 800}} id='top right'>
+                  <p>What would you like to ask Chippy about Responsible AI or AWS security in general?</p>
+                  <p>{message}</p> 
+                  <Button variant='primary' onClick={handleTranscribe}>Ask Chippy</Button>
+                      <>
+                        <ContentLayout>
+                          <Container>
+                            <SpaceBetween size='xs'>
+                            <div style={{height: '200px'}} className={"transcriptionContainer"}>
+                              {lines.map((line, index) => {
+                              return (
+                                <div key={index}>{line.text}<br/></div>
+                              )
+                              })}
+                              {currentLine.length > 0 && 
+                              currentLine.map((line, index) => {
+                                return (
+                                <div key={index}>
+                                  {line.text}
+                                  <br/>
+                                </div>
+                                )
+                              })
+                              }
+                            </div>
+                            </SpaceBetween>
+                          </Container>
+                        </ContentLayout>
+                        <LiveTranscriptions
+                          currentCredentials={currentCredentials}
+                          mediaRecorder={mediaRecorder}
+                          setMediaRecorder={setMediaRecorder}
+                          setTranscriptionClient={setTranscriptionClient}
+                          transcriptionClient={transcriptionClient}
+                          transcribeStatus={transcribeStatus}
+                          setTranscript={setTranscript}
+                          startRoundProp={startRoundProp}
+                          updateMessage={updateMessage}
+                        />
+                      </>
+                  </div>
+                  <div style={{width:'50%', float:'left', height: '15%'}} id='whitespace1'>                  
+                      <Link to="/security-challenge">
+                        <Button variant="primary">Play with Chippy</Button>
+                      </Link>                  
+                </div>
+              </div>
+              </div>} />
+              <Route path="/security-challenge" element={<ChallengePage />} />
+          </Routes>
+           )}
     </Authenticator>
   );
 };
