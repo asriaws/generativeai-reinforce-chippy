@@ -9,11 +9,11 @@ export default class Typewriter {
 
   constructor(
     parent: HTMLElement,
-    { loop = false, typingSpeed = 50, deletingSpeed = 50 } = {}
+    { loop = false, typingSpeed = 10, deletingSpeed = 10 } = {}
   ) {
     this.#element = document.createElement("div")
     parent.append(this.#element)
-    this.#loop = loop
+    this.#loop = loop,    
     this.#typingSpeed = typingSpeed
     this.#deletingSpeed = deletingSpeed
   }
