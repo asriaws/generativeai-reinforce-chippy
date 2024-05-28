@@ -6,7 +6,7 @@ declare const global: Window;
 export default defineConfig({
   define: {
     //Comment this for Amplify deployment but uncomment for local yarn run
-    global: typeof global === 'undefined' && Window,
+    //global: typeof global === 'undefined' && Window,
   },
   plugins: [react()],
 })
