@@ -162,13 +162,13 @@ const ChallengePage = () => {
       {() => (
           <Routes>
             <Route path="/" element={<div>
-              <h1 style={{color:'rgb(234 179 42)'}}>Get ready to play security trivia with Chippy</h1>
+              <h1 style={{color:'#0972d3'}}>Chippy's Security Spectacular</h1>
               <div style={{width:'100%', height: '600px'}}>
                 <div style={{width:'50%', float:'left', paddingTop: '8%'}} id="top left">
-                  <img src="./images/playgame.gif" style={{width:'100%', height:'100%'}} alt="Image" id="securityChallenge" />
+                  <img src="./images/challenge.gif" style={{width:'100%', height:'100%'}} alt="Image" id="securityChallenge" />
                 </div>
                 <div style={{width:'50%', float:'right', paddingTop: '12%', paddingLeft: '10%', height: '85%', fontFamily: 'Geneva', fontWeight: 800}} id='top right'>
-                  <p>Are you ready with Generative AI and Security Concept on AWS? Help Chippy find his home</p>
+                  <p>Get ready to play security trivia with Chippy? Have fun and make Chippy move.</p>
                   <p>{message}</p> 
                   <LiveTranscriptions
                     currentCredentials={currentCredentials}

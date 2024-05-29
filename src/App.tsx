@@ -69,7 +69,7 @@ function App() {
           <Routes>
             <Route path="/" element={<div>
                 <div style={{width:'100%', height: '100%'}} id="top level div">
-					<h1 style={{color:'rgb(234 179 42)'}}>Chippy's Security Spectacular</h1>
+					<h1 style={{color:'#0972d3'}}>Chippy's Security Spectacular</h1>
 					<h3 style={{color:'#37646f'}}>Powered by Generative AI on AWS</h3>
 					<div style={{width:'50%', float:'left', paddingTop: '5%'}} id="top left">
 						<img src="./images/story-teller.png" style={{width:'100%', height:'100%'}} alt="Image" />

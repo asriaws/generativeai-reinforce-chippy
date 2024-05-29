@@ -160,7 +160,7 @@ const ResponsibleAIPage = () => {
       {() => (
           <Routes>
             <Route path="/" element={<div>
-              <h1 style={{color:'rgb(234 179 42)'}}>Learn Responsible AI with Chippy</h1>
+              <h1 style={{color:'#0972d3'}}>Chippy's Security Spectacular</h1>
               <div style={{width:'100%', height: '800px'}}>
                 <div style={{width:'50%', float:'left', paddingTop: '8%'}} id="top left">
                   <img src="./images/story.gif" style={{width:'100%', height:'100%'}} alt="Image" />
