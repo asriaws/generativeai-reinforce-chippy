@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@cloudscape-design/components';
+import { Routes, Route, Link} from 'react-router-dom';
 import { Auth } from 'aws-amplify';
 import { ICredentials } from "@aws-amplify/core";
 import { Authenticator } from '@aws-amplify/ui-react';
@@ -8,6 +9,7 @@ import { TranscribeStreamingClient } from "@aws-sdk/client-transcribe-streaming"
 import awsExports from './aws-exports';
 import './App.css';
 import LiveTranscriptions from './components/LiveTranscriptions';
+import ResponsibleAIPage from './responsibleAiPage';
 //import Typewriter from 'react-ts-typewriter';
 
 Auth.configure(awsExports);
@@ -154,38 +156,52 @@ const ChallengePage = () => {
       console.error('Error:', error);
     }
   };
-
+  
   return (
     <Authenticator loginMechanisms={['email']} formFields={formFields}>
-      <h1 style={{color:'#ec4b31'}}>Chippy's Security Spectacular</h1>
-			<h3 style={{color:'#37646f'}}>Learn Responsible AI on AWS</h3>
-      <div style={{width:'100%', height: '800px'}}>
-        <div style={{width:'50%', float:'left', paddingTop: '8%'}} id="top left">
-        <img src="./images/playgame.gif" style={{width:'100%', height:'100%'}} alt="Image" id="securityChallenge" />
-        </div>
-        <div style={{width:'50%', float:'right', paddingTop: '12%', paddingLeft: '10%', height: '85%', fontFamily: 'Geneva', fontWeight: 800}} id='top right'>
-          <p>Are you ready with Generative AI and Security Concept on AWS? Help Chippy find his home</p>
-          <p>{message}</p> 
-          <Button variant='primary' onClick={fetchAskQuestionAPI}>Start the Game</Button>
-
-      <LiveTranscriptions
-        currentCredentials={currentCredentials}
-        mediaRecorder={mediaRecorder}
-        setMediaRecorder={setMediaRecorder}
-        setTranscriptionClient={setTranscriptionClient}
-        transcriptionClient={transcriptionClient}
-        transcribeStatus={transcribeStatus}
-        setTranscribeStatus={setTranscribeStatus}
-        startRoundProp={startRoundProp}
-        updateMessage={updateMessage}
-      />
-   </div>
-          <div style={{width:'50%', float:'left', height: '15%'}} id='whitespace1'>
-          <div style={{width:'50%', float:'right', paddingTop: '10%', marginTop: '20%'}} >
-            
-          </div>
-        </div>
-      </div>
+      {() => (
+          <Routes>
+            <Route path="/" element={<div>
+              <h1 style={{color:'rgb(234 179 42)'}}>Get ready to play security trivia with Chippy</h1>
+              <div style={{width:'100%', height: '600px'}}>
+                <div style={{width:'50%', float:'left', paddingTop: '8%'}} id="top left">
+                  <img src="./images/playgame.gif" style={{width:'100%', height:'100%'}} alt="Image" id="securityChallenge" />
+                </div>
+                <div style={{width:'50%', float:'right', paddingTop: '12%', paddingLeft: '10%', height: '85%', fontFamily: 'Geneva', fontWeight: 800}} id='top right'>
+                  <p>Are you ready with Generative AI and Security Concept on AWS? Help Chippy find his home</p>
+                  <p>{message}</p> 
+                  <LiveTranscriptions
+                    currentCredentials={currentCredentials}
+                    mediaRecorder={mediaRecorder}
+                    setMediaRecorder={setMediaRecorder}
+                    setTranscriptionClient={setTranscriptionClient}
+                    transcriptionClient={transcriptionClient}
+                    transcribeStatus={transcribeStatus}
+                    setTranscribeStatus={setTranscribeStatus}
+                    startRoundProp={startRoundProp}
+                    updateMessage={updateMessage}
+                  />
+                </div>
+                <div style={{width:'50%', float:'left', height: '15%'}} id='whitespace1'>
+                    <div style={{width: '36%', float: 'left', textAlign: 'right'}}>
+                      <Button variant='primary' onClick={fetchAskQuestionAPI}>Start the Game</Button>
+                    </div>
+                    <div style={{width: '34%', float: 'left', textAlign: 'right'}}>
+                      <Link to="/responsible-ai">
+                        <Button variant="primary">Storytime with Chippy</Button>
+                      </Link>
+                    </div>
+                    <div style={{width: '28%', float: 'left'}}>
+                      <Link to="/behindthescene">
+                        <Button variant="primary">Behind the Scene</Button>
+                      </Link>
+                    </div>       
+                </div>
+              </div>
+              </div>} />
+           <Route path="/responsible-ai" element={<ResponsibleAIPage />} />
+      </Routes>
+      )}
     </Authenticator>
   );
 }

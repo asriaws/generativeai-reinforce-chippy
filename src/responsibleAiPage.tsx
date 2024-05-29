@@ -160,16 +160,15 @@ const ResponsibleAIPage = () => {
       {() => (
           <Routes>
             <Route path="/" element={<div>
-              <h1 style={{color:'#ec4b31'}}>Chippy's Security Spectacular</h1>
-              <h3 style={{color:'#37646f'}}>Learn Responsible AI on AWS</h3>
+              <h1 style={{color:'rgb(234 179 42)'}}>Learn Responsible AI with Chippy</h1>
               <div style={{width:'100%', height: '800px'}}>
                 <div style={{width:'50%', float:'left', paddingTop: '8%'}} id="top left">
                   <img src="./images/story.gif" style={{width:'100%', height:'100%'}} alt="Image" />
                 </div>
-                <div style={{width:'50%', float:'right', paddingTop: '12%', paddingLeft: '10%', height: '85%', fontFamily: 'Geneva', fontWeight: 800}} id='top right'>
+                <div style={{width:'50%', float:'right', paddingTop: '12%', paddingLeft: '10%', height: '65%', fontFamily: 'Geneva', fontWeight: 800}} id='top right'>
                   <p>What would you like to ask Chippy about Responsible AI or AWS security in general?</p>
                   <p>{message}</p> 
-                  <Button variant='primary' onClick={handleTranscribe}>Ask Chippy</Button>
+                  
                       <>
                         <LiveTranscriptions
                           currentCredentials={currentCredentials}
@@ -184,11 +183,21 @@ const ResponsibleAIPage = () => {
                         />
                       </>
                   </div>
-                  <div style={{width:'50%', float:'left', height: '15%'}} id='whitespace1'>                  
-                      <Link to="/security-challenge" onClick={fetchIntroAPI}>
-                        <Button variant="primary">Play with Chippy</Button>
-                      </Link>                  
-                </div>
+                  <div style={{width:'50%', float:'left', height: '35%'}} id='whitespace1'>                  
+                      <div style={{width: '44%', float: 'left', textAlign: 'right'}}>
+                          <Button variant='primary' onClick={handleTranscribe}>Ask Chippy</Button>
+                      </div>
+                      <div style={{width: '28%', float: 'left', textAlign: 'right'}}>
+                        <Link to="/security-challenge" onClick={fetchIntroAPI}>
+                          <Button variant="primary">Play with Chippy</Button>
+                        </Link>
+                      </div>
+                      <div style={{width: '28%', float: 'left'}}>
+                        <Link to="/behindthescene">
+                          <Button variant="primary">Behind the Scene</Button>
+                        </Link>
+                      </div>                  
+                  </div>
               </div>
               </div>} />
               <Route path="/security-challenge" element={<ChallengePage />} />

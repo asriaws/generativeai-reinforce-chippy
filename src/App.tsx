@@ -13,14 +13,6 @@ import Typewriter from 'react-ts-typewriter';
 
 Auth.configure(awsExports);
 
-async function signOut() {
-
-	try {
-		await Auth.signOut();
-	} catch (error) {
-		console.log('error signing out: ', error);
-	}
-}
 function App() {
 
   const formFields = {
@@ -76,33 +68,33 @@ function App() {
       {() => (
           <Routes>
             <Route path="/" element={<div>
-                <div style={{width:'100%', height: '800px'}} id="top level div">
-					<h1 style={{color:'#ec4b31'}}>Chippy's Security Spectacular</h1>
-					<h3 style={{color:'#37646f'}}>Learn Responsible AI on AWS</h3>
-					<div style={{width:'50%', float:'left', paddingTop: '8%'}} id="top left">
+                <div style={{width:'100%', height: '100%'}} id="top level div">
+					<h1 style={{color:'rgb(234 179 42)'}}>Chippy's Security Spectacular</h1>
+					<h3 style={{color:'#37646f'}}>Powered by Generative AI on AWS</h3>
+					<div style={{width:'50%', float:'left', paddingTop: '5%'}} id="top left">
 						<img src="./images/story-teller.png" style={{width:'100%', height:'100%'}} alt="Image" />
 					</div>
-					<div style={{width:'50%', float:'right', paddingTop: '20%', paddingLeft: '10%', height: '80%', fontFamily: 'Geneva', fontWeight: 800}} id='top right'>
+					<div style={{width:'50%', float:'right', paddingTop: '15%', paddingLeft: '10%', height: '600px', fontFamily: 'Geneva', fontWeight: 800}} id='top right'>
 						<Typewriter text='What is AWS Key Management Service?'/>
 						<br/>
 						<br/>
-						<Typewriter text={TyperwriterText}  loop= {true} delay= {1000}/>
+						<Typewriter text={TyperwriterText}  loop= {true} delay= {10000}/>
 					</div>
 					<div style={{width:'50%', float:'left', height: '20%'}} id='whitespace1'>
-						<div style={{width: '45%', float: 'left', textAlign: 'right'}}>
+						<div style={{width: '44%', float: 'left', textAlign: 'right'}}>
 							<Link to="/responsible-ai">
-								<Button variant="primary">Learn with Story</Button>
+								<Button variant="primary">Storytime with Chippy</Button>
 							</Link>
 						</div>
-						<div style={{width: '30%', float: 'left', textAlign: 'right'}}>
+						<div style={{width: '28%', float: 'left', textAlign: 'right'}}>
 							<Link to="/security-challenge" onClick={fetchIntroAPI}>
 								<Button variant="primary">Play with Chippy</Button>
 							</Link>
 						</div>
-						<div style={{width: '20%', float: 'left'}}>
-							<Button variant='primary' onClick={signOut}>
-								Sign out
-							</Button>
+						<div style={{width: '28%', float: 'left'}}>
+							<Link to="/behindthescene">
+								<Button variant="primary">Behind the Scene</Button>
+							</Link>
 						</div>
 					</div>
 				</div>                 
