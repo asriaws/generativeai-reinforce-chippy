@@ -7,6 +7,7 @@ import './App.css';
 import { Button } from '@cloudscape-design/components';
 import ResponsibleAIPage from './responsibleAiPage';
 import ChallengePage from './challenge';
+import BehindTheScene from './behindthescene';
 import { Auth } from 'aws-amplify';
 import Typewriter from 'react-ts-typewriter';
 
@@ -108,6 +109,7 @@ function App() {
               </div>} />
             <Route path="/responsible-ai" element={<ResponsibleAIPage />} />
             <Route path="/security-challenge" element={<ChallengePage />} />
+			<Route path="/behindthescene" element={<BehindTheScene />} />
           </Routes>
      
       )}

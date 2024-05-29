@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@aws-amplify/ui-react": "^5.3.1",
+    "@aws-sdk/client-kinesis": "^3.583.0",
     "@aws-sdk/client-lambda": "^3.577.0",
     "@aws-sdk/client-sfn": "^3.583.0",
     "@aws-sdk/client-transcribe-streaming": "^3.427.0",
@@ -24,9 +25,11 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-native-paho-mqtt": "^0.1.1",
+    "react-player": "^2.16.0",
     "react-router-dom": "^6.16.0",
     "react-router-hash-link": "^2.4.3",
-    "react-ts-typewriter": "^0.1.8-b"
+    "react-ts-typewriter": "^0.1.8-b",
+    "react-video-play": "^2.0.3"
   },
   "devDependencies": {
     "@types/audioworklet": "^0.0.50",
