@@ -86,7 +86,7 @@ const ChallengePage = () => {
   
       const handleVoicesChanged = () => {
         voices = synth.getVoices();
-        const joelleVoice = voices.find(voice => voice.voiceURI === 'Joelle');
+        const joelleVoice = voices.find(voice => voice.voiceURI === 'Evan');
   
         if (joelleVoice) {
           utterance = new SpeechSynthesisUtterance(processedText);
