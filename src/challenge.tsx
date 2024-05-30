@@ -23,7 +23,7 @@ const ChallengePage = () => {
     secretAccessKey: "",
     sessionToken: ""
   });
-
+  const [progressbar, setProgressbar] = useState("hidden");
   const [transcriptionClient, setTranscriptionClient] = useState<TranscribeStreamingClient | null>(null);
   const [transcribeStatus, setTranscribeStatus] = useState<boolean>(false);
   const [mediaRecorder, setMediaRecorder] = useState<AudioWorkletNode>();
@@ -116,6 +116,7 @@ const ChallengePage = () => {
 
 
   const fetchAskQuestionAPI = async () => {
+    setProgressbar("")
     const apiUrl = 'https://6gh412g0c7.execute-api.us-east-1.amazonaws.com/test/askQuestion';
     try {
       const response = await fetch(apiUrl, {
@@ -145,7 +146,7 @@ const ChallengePage = () => {
         }
   
         console.log('Question:', question);
-  
+        setProgressbar("hidden")
         await updateMessage(question);
         setStartRoundProp(true);
         handleTranscribe();
@@ -181,6 +182,7 @@ const ChallengePage = () => {
                     startRoundProp={startRoundProp}
                     updateMessage={updateMessage}
                   />
+                  {progressbar == 'hidden' ? null : <img src="./images/playgame.gif" style={{width:'60%', height:'60%'}} alt="Image" />}
                 </div>
                 <div style={{width:'50%', float:'left', height: '15%'}} id='whitespace1'>
                     <div style={{width: '36%', float: 'left', textAlign: 'right'}}>

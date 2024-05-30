@@ -10,8 +10,9 @@ import awsExports from './aws-exports';
 import './App.css';
 import LiveTranscriptions from './components/LiveTranscriptions';
 import ChallengePage from './challenge';
-
 Auth.configure(awsExports);
+
+
 
 const ResponsibleAIPage = () => {
   const [currentCredentials, setCurrentCredentials] = useState<ICredentials>({
@@ -25,6 +26,7 @@ const ResponsibleAIPage = () => {
 
   const [transcriptionClient, setTranscriptionClient] = useState<TranscribeStreamingClient | null>(null);
   const [transcribeStatus, setTranscribeStatus] = useState<boolean>(false);
+  const [progressbar, setProgressbar] = useState("hidden");
   //const [transcript, setTranscript] = useState<Transcript>();
   //const [lines, setLines] = useState<Transcript[]>([]);
   //const [currentLine, setCurrentLine] = useState<Transcript[]>([]);
@@ -76,6 +78,7 @@ const ResponsibleAIPage = () => {
   };
 //Handletranscribe is part of the magic, sends transcript text to
   const handleTranscribe = async () => {
+    setProgressbar("")
     setTranscribeStatus(!transcribeStatus);
     if (transcribeStatus) {
       console.log("Stopping transcription");
@@ -125,6 +128,7 @@ const ResponsibleAIPage = () => {
 
   const updateMessage = async (newMessage: string) => {
     setMessage(newMessage);
+    setProgressbar("hidden")
     await textToSpeech(newMessage);
   };
 
@@ -168,7 +172,6 @@ const ResponsibleAIPage = () => {
                 <div style={{width:'50%', float:'right', paddingTop: '12%', paddingLeft: '10%', height: '65%', fontFamily: 'Geneva', fontWeight: 800}} id='top right'>
                   <p>What would you like to ask Chippy about Responsible AI or AWS security in general?</p>
                   <p>{message}</p> 
-                  
                       <>
                         <LiveTranscriptions
                           currentCredentials={currentCredentials}
@@ -182,6 +185,7 @@ const ResponsibleAIPage = () => {
                           updateMessage={updateMessage}
                         />
                       </>
+                      {progressbar == 'hidden' ? null : <img src="./images/playgame.gif" style={{width:'60%', height:'60%'}} alt="Image" />}
                   </div>
                   <div style={{width:'50%', float:'left', height: '35%'}} id='whitespace1'>                  
                       <div style={{width: '44%', float: 'left', textAlign: 'right'}}>
