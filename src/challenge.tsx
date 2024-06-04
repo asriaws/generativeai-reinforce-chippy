@@ -181,6 +181,8 @@ const ChallengePage = () => {
                     setTranscribeStatus={setTranscribeStatus}
                     startRoundProp={startRoundProp}
                     updateMessage={updateMessage}
+                    userQuestion={() => {}} // Pass an empty arrow function for userQuestion
+                    handleAnswer={() => {}} 
                   />
                   {progressbar == 'hidden' ? null : <img src="./images/playgame.gif" style={{width:'60%', height:'60%'}} alt="Image" />}
                 </div>

@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { Routes, Route, Link} from 'react-router-dom';
 import { Button } from '@cloudscape-design/components';
 import { Auth } from 'aws-amplify';
 import { ICredentials } from "@aws-amplify/core";
@@ -8,8 +7,13 @@ import '@aws-amplify/ui-react/styles.css';
 import { TranscribeStreamingClient } from "@aws-sdk/client-transcribe-streaming";
 import awsExports from './aws-exports';
 import './App.css';
+//import { Transcript } from './types';
 import LiveTranscriptions from './components/LiveTranscriptions';
-import ChallengePage from './challenge';
+//import ChallengePage from './challenge';
+//import { ContentLayout, SpaceBetween, Container } from '@cloudscape-design/components';
+import { QuestionAnswer } from './types';
+
+
 Auth.configure(awsExports);
 
 
@@ -31,8 +35,9 @@ const ResponsibleAIPage = () => {
   //const [lines, setLines] = useState<Transcript[]>([]);
   //const [currentLine, setCurrentLine] = useState<Transcript[]>([]);
   const [mediaRecorder, setMediaRecorder] = useState<AudioWorkletNode>();
-  const [message, setMessage] = useState("");
+  //const [message, setMessage] = useState("");
   const [startRoundProp] = useState<boolean>(false);
+  const [conversationHistory, setConversationHistory] = useState<QuestionAnswer[]>([]);
 
   useEffect(() => {
     async function getAuth() {
@@ -88,125 +93,108 @@ const ResponsibleAIPage = () => {
     return transcribeStatus;
   };
   //text to speech
-  //new text to speech
   const textToSpeech = (text: string): Promise<void> => {
     const synth = window.speechSynthesis;
-    let utterance: SpeechSynthesisUtterance;
-    let resolvePromise: () => void;
-  
-    // Replace "AWS" with "A // W // S" and periods with a pause
-    const processedText = text.replace(/AWS/g, 'A // W // S').replace(/\./g, ' // ');
   
     return new Promise((resolve, reject) => {
+      let resolvePromise: () => void;
       resolvePromise = resolve;
       let voices: SpeechSynthesisVoice[] = [];
   
       const handleVoicesChanged = () => {
         voices = synth.getVoices();
-        const joelleVoice = voices.find(voice => voice.voiceURI === 'Evan');
+        const evanVoice = voices.find(voice => voice.voiceURI === 'Evan');
   
-        if (joelleVoice) {
-          utterance = new SpeechSynthesisUtterance(processedText);
-          utterance.voice = joelleVoice;
+        if (evanVoice) {
+          const utterance = new SpeechSynthesisUtterance(text); // Create a new instance here
+          utterance.voice = evanVoice;
           utterance.onend = resolvePromise;
           utterance.onerror = (event) => {
             reject(`An error occurred during speech synthesis: ${event.error}`);
           };
           synth.speak(utterance);
         } else {
-          reject('Voice "Joelle" not found');
+          reject('Voice "Evan" not found');
         }
       };
   
-      synth.addEventListener('voiceschanged', handleVoicesChanged);
-  
-      if (synth.getVoices().length > 0) {
+      if (voices.length === 0) {
+        window.speechSynthesis.addEventListener('voiceschanged', handleVoicesChanged);
+      } else {
         handleVoicesChanged();
       }
     });
   };
 
   const updateMessage = async (newMessage: string) => {
-    setMessage(newMessage);
+    //setMessage(newMessage);
     setProgressbar("hidden")
     await textToSpeech(newMessage);
   };
 
-  const fetchIntroAPI = async () => {
-    //code to invoke evaluate response api
-    const apiUrl = 'https://6gh412g0c7.execute-api.us-east-1.amazonaws.com/test/intro';
-    fetch(apiUrl, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .then(response => {
-        if (response.ok) {
-          console.log('Response headers:', response.headers);
-          return response.json(); // Parse the response as JSON
-        } else {
-          throw new Error('Request failed with status code: ' + response.status);
-        }
-      })
-      .then(data => {
-        // Handle the response data
-        console.log('Response data:', data);
-      })
-      .catch(error => {
-        // Handle any errors
-        console.error('Error:', error);
-      });
+  const handleUserQuestion = (inputText: string) => {
+    setConversationHistory((prevHistory) => [
+      ...prevHistory,
+      { question: inputText, answer: '' },
+    ]);
+  };
+  
+  const handleAnswer = (answer: string) => {
+    setConversationHistory((prevHistory) => {
+      const newHistory = [...prevHistory];
+      newHistory[newHistory.length - 1].answer = answer;
+      return newHistory;
+    });
   };
 
   return (
     <Authenticator loginMechanisms={['email']} formFields={formFields}>
-      {() => (
-          <Routes>
-            <Route path="/" element={<div>
-              <h1 style={{color:'#0972d3'}}>Chippy's Security Spectacular</h1>
-              <div style={{width:'100%', height: '800px'}}>
-                <div style={{width:'50%', float:'left', paddingTop: '8%'}} id="top left">
-                  <img src="./images/story.gif" style={{width:'100%', height:'100%'}} alt="Image" />
-                </div>
-                <div style={{width:'50%', float:'right', paddingTop: '12%', paddingLeft: '10%', height: '65%', fontFamily: 'Geneva', fontWeight: 800}} id='top right'>
-                  <p>What would you like to ask Chippy about Responsible AI or AWS security in general?</p>
-                  <p>{message}</p> 
-                      <>
-                        <LiveTranscriptions
-                          currentCredentials={currentCredentials}
-                          mediaRecorder={mediaRecorder}
-                          setMediaRecorder={setMediaRecorder}
-                          setTranscriptionClient={setTranscriptionClient}
-                          transcriptionClient={transcriptionClient}
-                          transcribeStatus={transcribeStatus}
-                          setTranscribeStatus={setTranscribeStatus}
-                          startRoundProp={startRoundProp}
-                          updateMessage={updateMessage}
-                        />
-                      </>
-                      {progressbar == 'hidden' ? null : <img src="./images/playgame.gif" style={{width:'60%', height:'60%'}} alt="Image" />}
-                  </div>
-                  <div style={{width:'50%', float:'left', height: '35%'}} id='whitespace1'>                  
-                      <div style={{width: '44%', float: 'left', textAlign: 'right'}}>
-                          <Button variant='primary' onClick={handleTranscribe}>Ask Chippy</Button>
-                      </div>
-                      <div style={{width: '28%', float: 'left', textAlign: 'right'}}>
-                        <Link to="/security-challenge" onClick={fetchIntroAPI}>
-                          <Button variant="primary">Play with Chippy</Button>
-                        </Link>
-                      </div>
-                      <div style={{width: '28%', float: 'left'}}>
-                        <Link to="/behindthescene">
-                          <Button variant="primary">Behind the Scene</Button>
-                        </Link>
-                      </div>                  
-                  </div>
-              </div>
-              </div>} />
-              <Route path="/security-challenge" element={<ChallengePage />} />
-          </Routes>
-           )}
+    <div>
+    </div>
+    <h1>Responsible AI With Chippy</h1>
+    <div style={{width:'100%', height: '800px'}}>
+    <div style={{width:'50%', float:'right', paddingTop: '10%', marginTop: '20%'}} >
+      <p>What would you like to ask Chippy about Responsible AI? Chippy is happy to enable us how to use AI in a kind and helpful way.</p>
+      
+      <Button onClick={handleTranscribe}>
+        Submit
+      </Button>
+      <div style={{ marginTop: '20px' }}>
+  <h3>Conversation History</h3>
+  <ul>
+    {conversationHistory.map((item, index) => (
+      <li key={index}>
+        <p>
+          <strong>Question:</strong> {item.question}
+        </p>
+        <p>
+          <strong>Answer:</strong> {item.answer}
+        </p>
+      </li>
+    ))}
+  </ul>
+</div>
+      <>
+					  <LiveTranscriptions
+						currentCredentials={currentCredentials}
+						mediaRecorder={mediaRecorder}
+						setMediaRecorder={setMediaRecorder}
+						setTranscriptionClient={setTranscriptionClient}
+						transcriptionClient={transcriptionClient}
+						transcribeStatus={transcribeStatus}
+            setTranscribeStatus={setTranscribeStatus}
+						startRoundProp={startRoundProp}
+						updateMessage={updateMessage}
+            userQuestion={handleUserQuestion}
+            handleAnswer={handleAnswer}
+					  />
+					</>
+          {progressbar == 'hidden' ? null : <img src="./images/playgame.gif" style={{width:'60%', height:'60%'}} alt="Image" />}
+    </div>
+    <div style={{width:'50%', float:'left', paddingTop: '10%'}} >
+      <img src="./images/story.gif" style={{width:'100%', height:'100%'}} alt="Image" />
+    </div>
+    </div>
     </Authenticator>
   );
 };

@@ -18,6 +18,8 @@ export interface LiveTranscriptionProps {
   //setTranscript: (t: Transcript) => void,
   startRoundProp: boolean,
   updateMessage: (newMessage: string) => void,
+  userQuestion: (inputText: string) => void,
+  handleAnswer: (answer: string) => void,
 }
 
 
@@ -32,3 +34,8 @@ export type MessageDataType = {
   buffer: Array<Float32Array>,
   recordingLength: number
 };
+
+export interface QuestionAnswer {
+  question: string;
+  answer: string;
+}

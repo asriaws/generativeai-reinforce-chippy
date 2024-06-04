@@ -27,6 +27,8 @@ const startStreaming = async (
   setInputText: (text: string) => void, //new
   startRoundProp: boolean,
   updateMessage: (newMessage: string) => void,
+  userQuestion: (inputText: string) => void,
+  handleAnswer: (answer: string) => void,
 ) => {
 
   const audioContext = new window.AudioContext();
@@ -49,7 +51,7 @@ const startStreaming = async (
   const recordingprops: RecordingProperties = {
     numberOfChannels: 1,
     sampleRate: audioContext.sampleRate,
-    maxFrameCount: audioContext.sampleRate * 1 / 10
+    maxFrameCount: audioContext.sampleRate * 2 / 10
   };
 
   try {
@@ -92,7 +94,6 @@ const startStreaming = async (
       }
     }
   };
-  //Sends audio stream to AWS Transcribe
   const transcribeClient = new TranscribeStreamingClient({
     region: 'us-east-1',
     credentials: currentCredentials,
@@ -108,29 +109,45 @@ const startStreaming = async (
   console.log('Transcribe sesssion established ', data.SessionId);
 
   let inputText = ''; // Initialize an empty string to store the input text NEW
-  const startTime = Date.now(); // Get the start time of the transcription NEW
+  //const startTime = Date.now(); // Get the start time of the transcription NEW
 
   if (data.TranscriptResultStream) {
-    for await (const event of data.TranscriptResultStream) {      //new
-      const currentTime = Date.now();               //new
-      const elapsedTime = currentTime - startTime; //new
-      if (elapsedTime > 5000) {                   // Stop processing after 5 seconds NEW
-        break;                                    //new
-      }                                           //new
-      if (event?.TranscriptEvent?.Transcript) {
-        for (const result of event?.TranscriptEvent?.Transcript.Results || []) {
-          if (result?.Alternatives && result?.Alternatives[0].Items) {
-            let completeSentence = ``;
-            for (let i = 0; i < result?.Alternatives[0].Items?.length; i++) {
-              completeSentence += ` ${result?.Alternatives[0].Items[i].Content}`;
-            }
-            inputText += completeSentence; // Append each complete sentence to the input text NEW
+    const startTime = Date.now(); // Get the start time of the transcription
+    //let inputText = '';
+  
+    for await (const event of data.TranscriptResultStream) {
+      const currentTime = Date.now(); // Get the current time
+      const elapsedTime = currentTime - startTime; // Calculate the elapsed time
+  
+      if (elapsedTime > 5000) { // Stop processing after 5 seconds
+        break;
+      }
+  
+      if (event.TranscriptEvent?.Transcript?.Results) {
+        for (const result of event.TranscriptEvent.Transcript.Results) {
+          if (result.Alternatives && result.Alternatives.length > 0 && result.Alternatives[0].Items) {
+            const transcript = result.Alternatives[0].Items.map(
+              (item) => item.Content
+            ).join(' ');
+  
+            // Remove duplicate words from the transcript
+            const uniqueTranscript = Array.from(new Set(transcript.split(' '))).join(' ');
+  
+            // Update the displayed text with the unique transcript
+            //setInputText(uniqueTranscript.trim());
+  
+            // Store the final transcript
+            inputText = uniqueTranscript.trim();
           }
         }
       }
-    }  
+    }
+    setInputText(inputText); // Set the input text after the transcription is complete or 5 seconds have elapsed if
+    // Call the userQuestion function with the final transcript
+    if (userQuestion) {
+      userQuestion(inputText);
+    }
   }
-  setInputText(inputText.trim()); // Set the input text after the transcription is complete or 5 seconds have elapsed
   
 
   console.log("After Lambda Invoke01")
@@ -142,10 +159,11 @@ const startStreaming = async (
   //Game Flow Starts Here
   //Execute Intro
 
+  //AskQuestion
 
   //Transcribe transcription message (stream response)
-  const input = { "question": inputText }; //new
-  const inputJSON = JSON.stringify(input);
+  //const input = { "question": inputText }; //new
+  //const inputJSON = JSON.stringify(input);
 
   //triggers the Start Round Button
   if (startRoundProp == true) {
@@ -177,7 +195,6 @@ const startStreaming = async (
     };
     await sendDataToKinesisStream(inputText);
     await updateMessage("Sniffing out the right answer is no easy task, let’s paws and see if your answer will earn you a treat!");
-
     //code to invoke evaluate response api
     const apiUrl = 'https://6gh412g0c7.execute-api.us-east-1.amazonaws.com/test/evaluateResponse';
     fetch(apiUrl, {
@@ -199,13 +216,13 @@ const startStreaming = async (
         console.log('Response data:', data);
         // Use regular expressions to check if the response includes "Correct" or "Incorrect"
         const incorrectRegex = /Incorrect/i;
-        
-        if (incorrectRegex.test(data)) {
-          // Call the API for correct answer
-          console.log("Incorrect Answer");
-        } else  {
-          // Call the API for incorrect answer
-          console.log("Correct Answer");
+
+        if(incorrectRegex.test(data)){
+          
+        }
+
+        else{
+
         }
 
         updateMessage(data);
@@ -221,11 +238,12 @@ const startStreaming = async (
   else ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   {
     // Calls AskChippy lambda Function
-  const response = await lambdaClient.send(
+    const lambdaPayload = JSON.stringify({ question: inputText });
+    const response = await lambdaClient.send(
     new InvokeCommand({
       FunctionName: "askChippy",
       InvocationType: "RequestResponse",
-      Payload: inputJSON,
+      Payload: lambdaPayload,
     })
   );
   //gets payload back from function
@@ -233,6 +251,7 @@ const startStreaming = async (
 
   // Text to Speech Conversion
   const text = payload.body;
+  handleAnswer(text);
   updateMessage(text);
   }
 };
@@ -291,6 +310,8 @@ const LiveTranscriptions = (props: LiveTranscriptionProps) => {
         setInputText,
         props.startRoundProp,
         props.updateMessage,
+        props.userQuestion, 
+        props.handleAnswer,// Pass the userQuestion prop
       );
     } catch (error) {
       alert(`An error occurred while recording: ${error}`);
