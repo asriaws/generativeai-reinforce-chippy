@@ -73,6 +73,9 @@ const ChallengePage = () => {
 
   //new text to speech
   const textToSpeech = (text: string): Promise<void> => {
+    if (text) {
+      text =  text.split('.').join('!.')
+    }
     const synth = window.speechSynthesis;
     let utterance: SpeechSynthesisUtterance;
     let resolvePromise: () => void;
@@ -163,9 +166,10 @@ const ChallengePage = () => {
       {() => (
           <Routes>
             <Route path="/" element={<div>
-              <h1 style={{color:'#0972d3'}}>Chippy's Security Spectacular</h1>
+              <h1 style={{color:'#37646f'}}>Chippy's Security Spectacular</h1>
+					    <h3 style={{color:'black'}}>Powered by Generative AI on AWS</h3>
               <div style={{width:'100%', height: '600px'}}>
-                <div style={{width:'50%', float:'left', paddingTop: '8%'}} id="top left">
+                <div style={{width:'50%', float:'left', paddingTop: '3%'}} id="top left">
                   <img src="./images/challenge.gif" style={{width:'100%', height:'100%'}} alt="Image" id="securityChallenge" />
                 </div>
                 <div style={{width:'50%', float:'right', paddingTop: '12%', paddingLeft: '10%', height: '85%', fontFamily: 'Geneva', fontWeight: 800}} id='top right'>

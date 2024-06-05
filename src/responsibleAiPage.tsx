@@ -90,6 +90,9 @@ const ResponsibleAIPage = () => {
   //text to speech
   //new text to speech
   const textToSpeech = (text: string): Promise<void> => {
+    if (text) {
+      text =  text.split('.').join('!.')
+    }
     const synth = window.speechSynthesis;
     let utterance: SpeechSynthesisUtterance;
     let resolvePromise: () => void;
@@ -164,7 +167,8 @@ const ResponsibleAIPage = () => {
       {() => (
           <Routes>
             <Route path="/" element={<div>
-              <h1 style={{color:'#0972d3'}}>Chippy's Security Spectacular</h1>
+              <h1 style={{color:'#37646f'}}>Chippy's Security Spectacular</h1>
+					    <h3 style={{color:'black'}}>Powered by Generative AI on AWS</h3>
               <div style={{width:'100%', height: '800px'}}>
                 <div style={{width:'50%', float:'left', paddingTop: '8%'}} id="top left">
                   <img src="./images/story.gif" style={{width:'100%', height:'100%'}} alt="Image" />

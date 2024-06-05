@@ -30,11 +30,11 @@ const BehindTheScene = () => {
 
   return (
     <Authenticator loginMechanisms={['email']} formFields={formFields}>
-      <h1 style={{color:'#ec4b31'}}>Behind the Scene</h1>
+      <h1 style={{color:'#37646f'}}>Behind the Scene</h1>
       <div className="iframe-container">
       <ReactPlayer
         className='react-player fixed-bottom'
-        url= 'videos/pupper.mov'
+        url= 'videos/chippy.mp4'
         width='100%'
         height='100%'
         controls = {true}
