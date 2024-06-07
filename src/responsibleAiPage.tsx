@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Button } from '@cloudscape-design/components';
 import { Auth } from 'aws-amplify';
 import { ICredentials } from "@aws-amplify/core";
@@ -38,6 +38,7 @@ const ResponsibleAIPage = () => {
   const [startRoundProp] = useState<boolean>(false);
   const [conversationHistory, setConversationHistory] = useState<QuestionAnswer[]>([]);
   const [isTTSRunning, setIsTTSRunning] = useState(false);
+  const conversationHistoryRef = useRef(null);
 
   useEffect(() => {
     async function getAuth() {
@@ -50,6 +51,7 @@ const ResponsibleAIPage = () => {
       setCurrentCredentials(currCreds);
     });
   }, []);
+  
 
   const formFields = {
     signUp: {
@@ -152,44 +154,52 @@ const ResponsibleAIPage = () => {
     </div>
     <h1>Responsible AI With Chippy</h1>
     <div style={{width:'100%', height: '800px'}}>
-    <div style={{width:'50%', float:'right', paddingTop: '10%', marginTop: '20%'}} >
-      <p>What would you like to ask Chippy about Responsible AI? Chippy is happy to enable us how to use AI in a kind and helpful way.</p>
-      
-      <Button onClick={handleTranscribe} loading={isTTSRunning}>
-        Submit
-      </Button>
-      <div style={{ marginTop: '20px' }}>
+    <div style={{width:'50%', float:'right', paddingTop: '5%', marginTop: '5%'}} >
+  <p>What would you like to ask Chippy about Responsible AI? Chippy is happy to enable us how to use AI in a kind and helpful way.</p>
+  
+  <Button onClick={handleTranscribe} loading={isTTSRunning}>
+    Submit
+  </Button>
+  <div style={{ marginTop: '20px' }}>
   <h3>Conversation History</h3>
-  <ul>
-    {conversationHistory.map((item, index) => (
-      <li key={index}>
-        <p>
-          <strong>Question:</strong> {item.question}
-        </p>
-        <p>
-          <strong>Answer:</strong> {item.answer}
-        </p>
-      </li>
-    ))}
-  </ul>
+  <div
+    style={{
+      maxHeight: '400px', // Increased height
+      overflowY: 'auto',
+      border: '1px solid #ddd', // Lighter border color
+      borderRadius: '5px', // Rounded corners
+      padding: '10px',
+      boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)', // Subtle box shadow
+    }}
+    ref={conversationHistoryRef}
+  >
+    <ul style={{ listStyleType: 'none', padding: 0, margin: 0 }}>
+      {conversationHistory.map((item, index) => (
+        <li key={index} style={{ marginBottom: '10px' }}>
+          <p style={{ fontWeight: 'bold' }}>Question: {item.question}</p>
+          <p>Answer: {item.answer}</p>
+        </li>
+      ))}
+    </ul>
+  </div>
 </div>
-      <>
-					  <LiveTranscriptions
-						currentCredentials={currentCredentials}
-						mediaRecorder={mediaRecorder}
-						setMediaRecorder={setMediaRecorder}
-						setTranscriptionClient={setTranscriptionClient}
-						transcriptionClient={transcriptionClient}
-						transcribeStatus={transcribeStatus}
-            setTranscribeStatus={setTranscribeStatus}
-						startRoundProp={startRoundProp}
-						updateMessage={updateMessage}
-            userQuestion={handleUserQuestion}
-            handleAnswer={handleAnswer}
-					  />
-					</>
-          {progressbar == 'hidden' ? null : <img src="./images/playgame.gif" style={{width:'60%', height:'60%'}} alt="Image" />}
-    </div>
+  <>
+    <LiveTranscriptions
+      currentCredentials={currentCredentials}
+      mediaRecorder={mediaRecorder}
+      setMediaRecorder={setMediaRecorder}
+      setTranscriptionClient={setTranscriptionClient}
+      transcriptionClient={transcriptionClient}
+      transcribeStatus={transcribeStatus}
+      setTranscribeStatus={setTranscribeStatus}
+      startRoundProp={startRoundProp}
+      updateMessage={updateMessage}
+      userQuestion={handleUserQuestion}
+      handleAnswer={handleAnswer}
+    />
+  </>
+  {progressbar === 'hidden' ? null : <img src="./images/playgame.gif" style={{width:'60%', height:'60%'}} alt="Image" />}
+</div>
     <div style={{width:'50%', float:'left', paddingTop: '10%'}} >
       <img src="./images/story.gif" style={{width:'100%', height:'100%'}} alt="Image" />
     </div>
