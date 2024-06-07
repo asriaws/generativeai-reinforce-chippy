@@ -21,6 +21,30 @@ const sampleRate = import.meta.env.VITE_TRANSCRIBE_SAMPLING_RATE;
 const language = import.meta.env.VITE_TRANSCRIBE_LANGUAGE_CODE as LanguageCode;
 const audiosource = import.meta.env.VITE_TRANSCRIBE_AUDIO_SOURCE;
 
+const invokeNextRoundLambda = async (currentCredentials: ICredentials) => {
+  try {
+    const lambdaClient = new LambdaClient({
+      region: 'us-east-1', // Replace with your AWS region
+      credentials: currentCredentials,
+    });
+
+    const payload = JSON.stringify({ message: 'Next round' }); // You can include any necessary data here
+
+    const command = new InvokeCommand({
+      FunctionName: 'nextRound', // Replace with your Lambda function name
+      Payload: payload,
+      InvocationType: 'RequestResponse', // Change to 'Event' for asynchronous invocation
+    });
+
+    const response = await lambdaClient.send(command);
+    console.log('nextRround Lambda invoked successfully');
+    // Handle the response from the Lambda function if needed
+    console.log('Response from Lambda:', response.Payload);
+  } catch (error) {
+    console.error('Error invoking Lambda function:', error);
+  }
+};
+
 
 const startStreaming = async (
   currentCredentials: ICredentials,
@@ -214,15 +238,21 @@ const startStreaming = async (
       .then(data => {
         // Handle the response data
         console.log('Response data:', data);
+
+        // Check if data is null or undefined before proceeding
+        if (data === null || data === undefined) {
+          console.error('Response data is null or undefined');
+          return;
+        }
         // Use regular expressions to check if the response includes "Correct" or "Incorrect"
         const incorrectRegex = /Incorrect/i;
 
         if(incorrectRegex.test(data)){
           
         }
-
         else{
-
+          // Invoke the nextRound Lambda function
+          invokeNextRoundLambda(currentCredentials);
         }
 
         updateMessage(data);
