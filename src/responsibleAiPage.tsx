@@ -17,7 +17,6 @@ import { QuestionAnswer } from './types';
 Auth.configure(awsExports);
 
 
-
 const ResponsibleAIPage = () => {
   const [currentCredentials, setCurrentCredentials] = useState<ICredentials>({
     accessKeyId: "",
@@ -38,6 +37,7 @@ const ResponsibleAIPage = () => {
   //const [message, setMessage] = useState("");
   const [startRoundProp] = useState<boolean>(false);
   const [conversationHistory, setConversationHistory] = useState<QuestionAnswer[]>([]);
+  const [isTTSRunning, setIsTTSRunning] = useState(false);
 
   useEffect(() => {
     async function getAuth() {
@@ -50,18 +50,6 @@ const ResponsibleAIPage = () => {
       setCurrentCredentials(currCreds);
     });
   }, []);
-
-  /* useEffect(() => {
-    if (transcript) {
-      setTranscript(transcript);
-      if (transcript.partial) {
-        setCurrentLine([transcript]);
-      } else {
-        setLines([...lines, transcript]);
-        setCurrentLine([]);
-      }
-    }ß
-  }, [transcript]); */
 
   const formFields = {
     signUp: {
@@ -94,42 +82,53 @@ const ResponsibleAIPage = () => {
   };
   //text to speech
   const textToSpeech = (text: string): Promise<void> => {
+    setIsTTSRunning(true); // Set isTTSRunning to true before starting text-to-speec
     const synth = window.speechSynthesis;
+    let utterance: SpeechSynthesisUtterance;
+    let resolvePromise: () => void;
+  
+    // Replace "AWS" with "A // W // S" and periods with a pause
+    const processedText = text.replace(/AWS/g, 'A // W // S').replace(/\./g, ' // ');
   
     return new Promise((resolve, reject) => {
-      let resolvePromise: () => void;
       resolvePromise = resolve;
       let voices: SpeechSynthesisVoice[] = [];
   
       const handleVoicesChanged = () => {
         voices = synth.getVoices();
-        const evanVoice = voices.find(voice => voice.voiceURI === 'Evan');
+        const joelleVoice = voices.find(voice => voice.voiceURI === 'Evan');
   
-        if (evanVoice) {
-          const utterance = new SpeechSynthesisUtterance(text); // Create a new instance here
-          utterance.voice = evanVoice;
-          utterance.onend = resolvePromise;
+        if (joelleVoice) {
+          utterance = new SpeechSynthesisUtterance(processedText);
+          utterance.voice = joelleVoice;
+          utterance.onend = () => {
+            resolvePromise();
+            setTimeout(() => {
+              setIsTTSRunning(false); // Turn off the button loading state after a short delay
+            }, 500);
+          };
           utterance.onerror = (event) => {
             reject(`An error occurred during speech synthesis: ${event.error}`);
+            setIsTTSRunning(false); // Set isTTSRunning to false if an error occurs
           };
           synth.speak(utterance);
         } else {
-          reject('Voice "Evan" not found');
+          reject('Voice "Joelle" not found');
+          setIsTTSRunning(false); // Set isTTSRunning to false if an error occurs
         }
       };
   
-      if (voices.length === 0) {
-        window.speechSynthesis.addEventListener('voiceschanged', handleVoicesChanged);
-      } else {
+      synth.addEventListener('voiceschanged', handleVoicesChanged);
+  
+      if (synth.getVoices().length > 0) {
         handleVoicesChanged();
       }
     });
   };
 
   const updateMessage = async (newMessage: string) => {
-    //setMessage(newMessage);
-    setProgressbar("hidden")
-    await textToSpeech(newMessage);
+    setProgressbar("hidden");
+    await Promise.all([textToSpeech(newMessage)]);
   };
 
   const handleUserQuestion = (inputText: string) => {
@@ -156,7 +155,7 @@ const ResponsibleAIPage = () => {
     <div style={{width:'50%', float:'right', paddingTop: '10%', marginTop: '20%'}} >
       <p>What would you like to ask Chippy about Responsible AI? Chippy is happy to enable us how to use AI in a kind and helpful way.</p>
       
-      <Button onClick={handleTranscribe}>
+      <Button onClick={handleTranscribe} loading={isTTSRunning}>
         Submit
       </Button>
       <div style={{ marginTop: '20px' }}>
