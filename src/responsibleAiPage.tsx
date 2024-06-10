@@ -158,7 +158,7 @@ const ResponsibleAIPage = () => {
   <p>What would you like to ask Chippy about Responsible AI? Chippy is happy to enable us how to use AI in a kind and helpful way.</p>
   
   <Button onClick={handleTranscribe} loading={isTTSRunning}>
-    Submit
+    Ask Chippy
   </Button>
   <div style={{ marginTop: '20px' }}>
   <h3>Conversation History</h3>

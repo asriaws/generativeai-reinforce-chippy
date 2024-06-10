@@ -83,7 +83,7 @@ function App() {
 					<div style={{width:'50%', float:'left', height: '20%'}} id='whitespace1'>
 						<div style={{width: '44%', float: 'left', textAlign: 'right'}}>
 							<Link to="/responsible-ai">
-								<Button variant="primary">Storytime with Chippy</Button>
+								<Button variant="primary">Ask Chippy</Button>
 							</Link>
 						</div>
 						<div style={{width: '28%', float: 'left', textAlign: 'right'}}>

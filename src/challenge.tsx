@@ -11,6 +11,7 @@ import './App.css';
 import LiveTranscriptions from './components/LiveTranscriptions';
 import ResponsibleAIPage from './responsibleAiPage';
 import { DynamoDBClient, ScanCommand, QueryCommand } from "@aws-sdk/client-dynamodb";
+import React from 'react';
 
 
 Auth.configure(awsExports);
@@ -50,12 +51,6 @@ const ChallengePage = () => {
       setCurrentCredentials(currCreds);
     });
   }, []);
-
-  /* useEffect(() => {
-    const interval = setInterval(fetchGameInfo, 5000); // Run fetchGameInfo every 5 seconds (5000 milliseconds)
-    // Clean up the interval on component unmount
-    return () => clearInterval(interval);
-  }, []); */
 
   const formFields = {
     signUp: {
@@ -133,26 +128,9 @@ const ChallengePage = () => {
     });
   };
 
-  const updateMessage = async (newMessage: string) => {
-    const isMultipleChoiceQuestion = (question: string) => {
-      const regex = /\n[A-Z]\)/;
-      return regex.test(question);
-    };
-
-    const formatMultipleChoiceQuestion = (question: string) => {
-      const [questionText, ...options] = question.split('\n');
-      const formattedOptions = options.map((option) => `<p>${option}</p>`).join('');
-      return `<p>${questionText}</p><br />${formattedOptions}`;
-    };
-  
-    let formattedMessage = newMessage;
-  
-    if (isMultipleChoiceQuestion(newMessage)) {
-      formattedMessage = formatMultipleChoiceQuestion(newMessage);
-    }
-
-    setMessage(formattedMessage);
-    await textToSpeech(formattedMessage);
+  const updateMessage = async (newMessage: string) => {  
+    setMessage(newMessage);
+    await textToSpeech(newMessage);
   };
 
 
@@ -307,7 +285,9 @@ const ChallengePage = () => {
                 <div style={{width:'50%', float:'right', paddingTop: '12%', height: '85%', fontFamily: 'Geneva', fontWeight: 800}} id='top right'>
                   <div style={{ marginLeft: '20px' }}>
                   <p>Enjoy playing a game with Chippy!</p>
-                  <div dangerouslySetInnerHTML={{ __html: message }} />
+                  return <div>
+    {message.split(/\n/).map(line => <React.Fragment key={line}>{line}<br/></React.Fragment>)}
+</div>
                   </div>
                   <LiveTranscriptions
                     currentCredentials={currentCredentials}
@@ -331,7 +311,7 @@ const ChallengePage = () => {
                     <div style={{display: 'flex', justifyContent: 'center'}}>
                   <div style={{marginRight: '10px'}}>
                    <Link to="/responsible-ai">
-                 <Button variant="primary">Storytime with Chippy</Button>
+                 <Button variant="primary">Ask Chippy</Button>
                   </Link>
                    </div>
                   <div>
