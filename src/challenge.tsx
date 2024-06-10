@@ -150,7 +150,7 @@ const ChallengePage = () => {
         const data = await response.json();
         console.log('API Response:', data);
   
-        const responseString = JSON.stringify(data);
+        const responseString = data; //JSON.stringify(data);
   
         // Check if the response contains 'question' key
         const questionRegex = /'question':\s*'([^']+)'/;
@@ -284,10 +284,19 @@ const ChallengePage = () => {
 
                 <div style={{width:'50%', float:'right', paddingTop: '12%', height: '85%', fontFamily: 'Geneva', fontWeight: 800}} id='top right'>
                   <div style={{ marginLeft: '20px' }}>
-                  <p>Enjoy playing a game with Chippy!</p>
-                  return <div>
-    {message.split(/\n/).map(line => <React.Fragment key={line}>{line}<br/></React.Fragment>)}
-</div>
+                    <p>Enjoy playing a game with Chippy!</p>
+                    <div>
+                    {
+                      message.split("\n").map(function(item, idx) {
+                          return (
+                              <label key={idx}>
+                                  {item}
+                                  <br/>
+                              </label>
+                          )
+                      })
+                    }
+                  </div>
                   </div>
                   <LiveTranscriptions
                     currentCredentials={currentCredentials}
