@@ -11,7 +11,7 @@ import './App.css';
 import LiveTranscriptions from './components/LiveTranscriptions';
 import ResponsibleAIPage from './responsibleAiPage';
 import { DynamoDBClient, ScanCommand, QueryCommand } from "@aws-sdk/client-dynamodb";
-import React from 'react';
+//import React from 'react';
 
 
 Auth.configure(awsExports);
