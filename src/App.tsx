@@ -33,7 +33,7 @@ function App() {
       },
     },
   };
-  const TyperwriterText = 'Once upon a time, there was a little girl. One day, Lily parents brought home a new robot puppy named Chippy. Chippy could do all sorts of cool tricks and games. However, Chippy would sometimes bark loudly and scare Lily. Lilys mom explained to her that Chippy was made using something called AI, which means it was really smart, but it didnt always know right from wrong. Mom said that the people who made Chippy needed to make sure they were being Responsible AI. This means they had to teach Chippy to be kind, fair, and safe, just like we teach real puppy.';
+  const TyperwriterText = "Hello, I’m Chipper the robot dog, but call me Chippy for short. Welcome to Chipper’s Security Spectacular! Get ready to learn about AWS security while competing in exciting challenges. Teams will face off, answering AWS security questions to claim victory. If you don’t want to compete right away or want to brush up your knowledge first, you can play “Ask Chippy” to ask me AWS security questions. Let the fun and learning begin! Woof!";
   //
   // Code for calling Intro API for Challenge button
   const fetchIntroAPI = async () => {
