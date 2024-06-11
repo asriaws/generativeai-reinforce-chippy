@@ -75,7 +75,6 @@ function App() {
 						<img src="./images/story-teller.png" style={{width:'100%', height:'100%'}} alt="Image" />
 					</div>
 					<div style={{width:'50%', float:'right', paddingTop: '15%', paddingLeft: '10%', height: '600px', fontFamily: 'Geneva', fontWeight: 800}} id='top right'>
-						<Typewriter text='What is AWS Key Management Service?'/>
 						<br/>
 						<br/>
 						<Typewriter text={TyperwriterText}  loop= {true} delay= {10000}/>
