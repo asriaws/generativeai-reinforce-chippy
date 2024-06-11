@@ -12,6 +12,7 @@ import LiveTranscriptions from './components/LiveTranscriptions';
 import ResponsibleAIPage from './responsibleAiPage';
 import { DynamoDBClient, ScanCommand, QueryCommand } from "@aws-sdk/client-dynamodb";
 //import React from 'react';
+import Typewriter from 'react-ts-typewriter';
 
 
 Auth.configure(awsExports);
@@ -37,8 +38,8 @@ const ChallengePage = () => {
   const [Round, setRound] = useState(0);
   let congratsMessageDisplayed = false; // Add this line
   const [isTTSRunning, setIsTTSRunning] = useState(false);
-
-
+  const [isPlayButtonClicked, setIsPlayButtonClicked] = useState(false);
+  const TyperwriterText = "Welcome to the exciting gameshow, hosted by yours truly, Chippy! Compete against your friends to answer my questions first, and prove yourself to be a AWS security champion! Click Play when your Ready!";
 
   useEffect(() => {
     async function getAuth() {
@@ -135,7 +136,8 @@ const ChallengePage = () => {
 
 
   const fetchAskQuestionAPI = async () => {
-    setProgressbar("")
+    setProgressbar("");
+    setIsPlayButtonClicked(true); // Set isPlayButtonClicked to true when Play button is clicked
     const apiUrl = 'https://6gh412g0c7.execute-api.us-east-1.amazonaws.com/test/askQuestion';
     try {
       const response = await fetch(apiUrl, {
@@ -284,7 +286,11 @@ const ChallengePage = () => {
 
                 <div style={{width:'50%', float:'right', paddingTop: '12%', height: '85%', fontFamily: 'Geneva', fontWeight: 800}} id='top right'>
                   <div style={{ marginLeft: '20px' }}>
-                    <p>Enjoy playing a game with Chippy!</p>
+                  {!isPlayButtonClicked && ( // Render Typewriter only when isPlayButtonClicked is false
+                    <Typewriter text={TyperwriterText} delay={10000} />
+                    )}
+                  <br></br>
+                  <br></br>
                     <div>
                     {
                       message.split("\n").map(function(item, idx) {
